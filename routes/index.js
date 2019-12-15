@@ -51,7 +51,7 @@ router.post('/login', (req, res, next) => {
 router.post('/register', (req, res) => {
   var user = req.body;
 
-  userModel.getByUsername(user.username)
+  userModel.getByEmail(user.username)
     .then((data) => {
       console.log("user");
       console.log(user);
