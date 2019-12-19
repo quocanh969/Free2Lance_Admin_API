@@ -125,7 +125,7 @@ router.put('/editSkill', function (req, res) {
         .then(data => {
           const payload = { id: id };
           let token = jwt.sign(payload, '1612018_1612175');
-          res.json({ data, token, message: "Edit completed", isEditting: false });
+          res.json({ data, token, message: "Edit completed", });
         })
         .catch(err => {
           res.json(err);
@@ -143,7 +143,7 @@ router.put('/deleteSkill', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Delete complete", isEditting: false });
+      res.json({ data, token, message: "Delete complete", });
     })
     .catch(err => {
       res.json(err);
@@ -156,7 +156,7 @@ router.put('/recoverSkill', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Recover complete", isEditting: false });
+      res.json({ data, token, message: "Recover complete", });
     })
     .catch(err => {
       res.json(err);
@@ -188,7 +188,7 @@ router.put('/editMajor', function (req, res) {
         .then(data => {
           const payload = { id: id };
           let token = jwt.sign(payload, '1612018_1612175');
-          res.json({ data, token, message: "Edit completed", isEditting: false });
+          res.json({ data, token, message: "Edit completed", });
         })
         .catch(err => {
           res.json(err);
@@ -220,7 +220,7 @@ router.put('/deleteMajor', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Delete complete", isEditting: false });
+      res.json({ data, token, message: "Delete complete", });
     })
     .catch(err => {
       res.json(err);
@@ -233,7 +233,7 @@ router.put('/recoverMajor', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Recover complete", isEditting: false });
+      res.json({ data, token, message: "Recover complete", });
     })
     .catch(err => {
       res.json(err);
