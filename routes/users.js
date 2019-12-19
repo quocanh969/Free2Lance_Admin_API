@@ -3,7 +3,7 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 var userModel = require('../models/userModel');
 var skillModel = require('../models/skillModel');
-const majorModel = require('./models/majorModel');
+var majorModel = require('../models/majorModel');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
@@ -176,4 +176,68 @@ router.post('/addSkill', function (req, res) {
       res.json(err);
     })
 })
+
+router.put('/editMajor', function (req, res) {
+  let id = req.body.id;
+  majorModel.readMajor(req.body.id_major)
+    .then(responseData => {
+      if (req.body.name === '' || req.body.name === undefined || req.body.name === null) req.body.name = responseData[0].name;
+      if (req.body.icoUrl === '' || req.body.icoUrl === undefined || req.body.icoUrl === null) req.body.icoUrl = responseData[0].icoUrl;
+
+      majorModel.updateMajor(id, req.body)
+        .then(data => {
+          const payload = { id: id };
+          let token = jwt.sign(payload, '1612018_1612175');
+          res.json({ data, token, message: "Edit completed", isEditting: false });
+        })
+        .catch(err => {
+          res.json(err);
+        })
+    })
+    .catch(err => {
+      console.log(err);
+      res.json(err);
+    })
+})
+
+router.post('/addMajor', function (req, res) {
+  let id = req.body.id;
+  // if (req.body.icoUrl === '' || req.body.icoUrl === undefined || req.body.icoUrl === null) req.body.icoUrl = 'https://cdn4.iconfinder.com/data/icons/school-subjects/256/Literature-512.png';
+  majorModel.createMajor(id, req.body)
+    .then(data => {
+      const payload = { id: id };
+      const token = jwt.sign(payload, '1612018_1612175');
+      res.json({ data, token, message: "Create successfully" });
+    })
+    .catch(err => {
+      res.json(err);
+    })
+})
+
+router.put('/deleteMajor', function (req, res) {
+  let id = req.body.id;
+  majorModel.deleteMajor(id, req.body.id_major)
+    .then(data => {
+      const payload = { id: id };
+      const token = jwt.sign(payload, '1612018_1612175');
+      res.json({ data, token, message: "Delete complete", isEditting: false });
+    })
+    .catch(err => {
+      res.json(err);
+    })
+})
+
+router.put('/recoverMajor', function (req, res) {
+  let id = req.body.id;
+  majorModel.recoverMajor(id, req.body.id_major)
+    .then(data => {
+      const payload = { id: id };
+      const token = jwt.sign(payload, '1612018_1612175');
+      res.json({ data, token, message: "Recover complete", isEditting: false });
+    })
+    .catch(err => {
+      res.json(err);
+    })
+})
+
 module.exports = router;
