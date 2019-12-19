@@ -125,15 +125,36 @@ router.put('/editSkill', function (req, res) {
         .then(data => {
           const payload = { id: id };
           let token = jwt.sign(payload, '1612018_1612175');
-          res.json({ data, token, message: "Edit completed", });
+          res.json({
+            code: 1,
+            info: {
+              data,
+              token,
+              message: "Edit completed",
+            }
+          });
         })
         .catch(err => {
-          res.json(err);
+          res.json({
+            code: 0,
+            info: {
+              data: null,
+              token: null,
+              message: err,
+            }
+          });
         })
     })
     .catch(err => {
       console.log(err);
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -143,10 +164,24 @@ router.put('/deleteSkill', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Delete complete", });
+      res.json({
+        code: 1,
+        info: {
+          data,
+          token,
+          message: "Delete completed",
+        }
+      });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -156,10 +191,24 @@ router.put('/recoverSkill', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Recover complete", });
+      res.json({
+        code: 1,
+        info: {
+          data,
+          token,
+          message: "Recover complete",
+        }
+      });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -170,10 +219,24 @@ router.post('/addSkill', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Create successfully" });
+      res.json({
+        code: 1,
+        info: {
+          data,
+          token,
+          message: "Create successfully"
+        }
+      });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -188,15 +251,36 @@ router.put('/editMajor', function (req, res) {
         .then(data => {
           const payload = { id: id };
           let token = jwt.sign(payload, '1612018_1612175');
-          res.json({ data, token, message: "Edit completed", });
+          res.json({
+            code: 1,
+            info: {
+              data,
+              token,
+              message: "Edit completed",
+            }
+          });
         })
         .catch(err => {
-          res.json(err);
+          res.json({
+            code: 0,
+            info: {
+              data: null,
+              token: null,
+              message: err,
+            }
+          });
         })
     })
     .catch(err => {
       console.log(err);
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -210,7 +294,14 @@ router.post('/addMajor', function (req, res) {
       res.json({ data, token, message: "Create successfully" });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -223,7 +314,14 @@ router.put('/deleteMajor', function (req, res) {
       res.json({ data, token, message: "Delete complete", });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
@@ -236,7 +334,14 @@ router.put('/recoverMajor', function (req, res) {
       res.json({ data, token, message: "Recover complete", });
     })
     .catch(err => {
-      res.json(err);
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      });
     })
 })
 
