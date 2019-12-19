@@ -6,6 +6,8 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 
 const userModel = require('./models/userModel');
+const skillModel = require('./models/skillModel');
+
 
 
 passport.use(new LocalStrategy(
@@ -36,7 +38,7 @@ passport.use(new LocalStrategy(
     }
 ));
 
-passport.use(new JWTStrategy(
+passport.use('GetById', new JWTStrategy(
     {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: '1612018_1612175',
@@ -57,5 +59,72 @@ passport.use(new JWTStrategy(
             .catch(err=>{                
                 return cb(err, null,{ message: 'Can not authorized', code: 0 });
             });
+    }
+));
+
+passport.use('EditSkill', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+        passReqToCallback: true,
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return skillModel.updateSkill(token.id, req.body)
+        .then(result => {
+            return done({message: "Edit successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Edit failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('DeleteSkill', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return skillModel.deleteSkill(token.id, req.body.id_skill)
+        .then(result => {
+            return done({message: "Delete successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Delete failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('RecoverSkill', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+        passReqToCallback: true,
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return skillModel.recoverSkill(token.id, req.body.id_skill)
+        .then(result => {
+            return done({message: "Recover successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Recover failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('CreateSkill', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return skillModel.createSkill(token.id, req.body)
+        .then(result => {
+            return done({message: "Create successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Create failed", code: 0, err});
+        })
     }
 ));
