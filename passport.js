@@ -7,8 +7,7 @@ const ExtractJWT = passportJWT.ExtractJwt;
 
 const userModel = require('./models/userModel');
 const skillModel = require('./models/skillModel');
-
-
+const majorModel = require('./models/majorModel');
 
 passport.use(new LocalStrategy(
     {
@@ -121,6 +120,72 @@ passport.use('CreateSkill', new JWTStrategy(
     function (req, token, done){
         // var info = req.body;
         return skillModel.createSkill(token.id, req.body)
+        .then(result => {
+            return done({message: "Create successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Create failed", code: 0, err});
+        })
+    }
+));
+passport.use('EditMajor', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+        passReqToCallback: true,
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return majorModel.updateMajor(token.id, req.body)
+        .then(result => {
+            return done({message: "Edit successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Edit failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('DeleteMajor', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return majorModel.deleteMajor(token.id, req.body.id_major)
+        .then(result => {
+            return done({message: "Delete successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Delete failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('RecoverMajor', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+        passReqToCallback: true,
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return majorModel.recoverMajor(token.id, req.body.id_major)
+        .then(result => {
+            return done({message: "Recover successfully", code: 1, result});
+        }).catch(err => {
+            return done({meesage: "Recover failed", code: 0, err});
+        })
+    }
+));
+
+passport.use('CreateMajor', new JWTStrategy(
+    {
+        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+        secretOrKey: '1612018_1612175',
+
+    },
+    function (req, token, done){
+        // var info = req.body;
+        return majorModel.createMajor(token.id, req.body)
         .then(result => {
             return done({message: "Create successfully", code: 1, result});
         }).catch(err => {

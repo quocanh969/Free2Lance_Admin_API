@@ -3,7 +3,7 @@ var router = express.Router();
 var jwt = require('jsonwebtoken');
 var userModel = require('../models/userModel');
 var skillModel = require('../models/skillModel');
-
+const majorModel = require('./models/majorModel');
 
 /* GET users listing. */
 router.get('/', function (req, res, next) {
