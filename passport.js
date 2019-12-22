@@ -31,7 +31,7 @@ passport.use(new LocalStrategy(
                     return cb(null, false, { message: 'Wrong username', code: 0 });
                 }
             })
-            .catch((error) => {                
+            .catch((error) => {
                 return cb(error)
             });
     }
@@ -42,154 +42,163 @@ passport.use('GetById', new JWTStrategy(
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: '1612018_1612175',
     },
-    function (jwtPayload, cb){              
+    function (jwtPayload, cb) {
         return userModel.getById(jwtPayload.id)
-            .then(data=>{     
-                if(data.length > 0)           
-                {
+            .then(data => {
+                if (data.length > 0) {
                     user = data[0];
-                    return cb(null, user,{message: 'Authorized', code: 1 });
-                }                
-                else
-                {
-                    return cb(err, null,{ message: 'Can not authorized', code: 0 });
+                    return cb(null, user, { message: 'Authorized', code: 1 });
+                }
+                else {
+                    return cb(null, null, { message: 'Can not authorized', code: 0 });
                 }
             })
-            .catch(err=>{                
-                return cb(err, null,{ message: 'Can not authorized', code: 0 });
+            .catch(err => {
+                return cb(err, null, { message: 'Can not authorized', code: 0 });
             });
     }
 ));
 
-passport.use('EditSkill', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-        passReqToCallback: true,
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return skillModel.updateSkill(token.id, req.body)
-        .then(result => {
-            return done({message: "Edit successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Edit failed", code: 0, err});
-        })
-    }
-));
+// passport.use('EditSkill', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return skillModel.updateSkill(token.id, req.body)
+//             .then(result => {
+//                 return done({ message: "Edit successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Edit failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('DeleteSkill', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return skillModel.deleteSkill(token.id, req.body.id_skill)
-        .then(result => {
-            return done({message: "Delete successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Delete failed", code: 0, err});
-        })
-    }
-));
+// passport.use('DeleteSkill', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return skillModel.deleteSkill(token.id, req.body.id_skill)
+//             .then(result => {
+//                 return done({ message: "Delete successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Delete failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('RecoverSkill', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-        passReqToCallback: true,
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return skillModel.recoverSkill(token.id, req.body.id_skill)
-        .then(result => {
-            return done({message: "Recover successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Recover failed", code: 0, err});
-        })
-    }
-));
+// passport.use('RecoverSkill', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return skillModel.recoverSkill(token.id, req.body.id_skill)
+//             .then(result => {
+//                 return done({ message: "Recover successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Recover failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('CreateSkill', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
+// passport.use('CreateSkill', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
 
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return skillModel.createSkill(token.id, req.body)
-        .then(result => {
-            return done({message: "Create successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Create failed", code: 0, err});
-        })
-    }
-));
-passport.use('EditMajor', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-        passReqToCallback: true,
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return majorModel.updateMajor(token.id, req.body)
-        .then(result => {
-            return done({message: "Edit successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Edit failed", code: 0, err});
-        })
-    }
-));
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return skillModel.createSkill(token.id, req.body)
+//             .then(result => {
+//                 return done({ message: "Create successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Create failed", code: 0, err });
+//             })
+//     }
+// ));
+// passport.use('EditMajor', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return majorModel.updateMajor(token.id, req.body)
+//             .then(result => {
+//                 return done({ message: "Edit successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Edit failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('DeleteMajor', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return majorModel.deleteMajor(token.id, req.body.id_major)
-        .then(result => {
-            return done({message: "Delete successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Delete failed", code: 0, err});
-        })
-    }
-));
+// passport.use('DeleteMajor', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return majorModel.deleteMajor(token.id, req.body.id_major)
+//             .then(result => {
+//                 return done({ message: "Delete successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Delete failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('RecoverMajor', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
-        passReqToCallback: true,
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return majorModel.recoverMajor(token.id, req.body.id_major)
-        .then(result => {
-            return done({message: "Recover successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Recover failed", code: 0, err});
-        })
-    }
-));
+// passport.use('RecoverMajor', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return majorModel.recoverMajor(token.id, req.body.id_major)
+//             .then(result => {
+//                 return done({ message: "Recover successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Recover failed", code: 0, err });
+//             })
+//     }
+// ));
 
-passport.use('CreateMajor', new JWTStrategy(
-    {
-        jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-        secretOrKey: '1612018_1612175',
+// passport.use('CreateMajor', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         // var info = req.body;
+//         return majorModel.createMajor(token.id, req.body)
+//             .then(result => {
+//                 return done({ message: "Create successfully", code: 1, result });
+//             }).catch(err => {
+//                 return done({ meesage: "Create failed", code: 0, err });
+//             })
+//     }
+// ));
 
-    },
-    function (req, token, done){
-        // var info = req.body;
-        return majorModel.createMajor(token.id, req.body)
-        .then(result => {
-            return done({message: "Create successfully", code: 1, result});
-        }).catch(err => {
-            return done({meesage: "Create failed", code: 0, err});
-        })
-    }
-));
+// passport.use('BanUser', new JWTStrategy(
+//     {
+//         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
+//         secretOrKey: '1612018_1612175',
+//         passReqToCallback: true,
+//     },
+//     function (req, token, done) {
+//         return userModel.banAccount()
+//     }
+// ))

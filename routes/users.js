@@ -4,7 +4,9 @@ var jwt = require('jsonwebtoken');
 var userModel = require('../models/userModel');
 var skillModel = require('../models/skillModel');
 var majorModel = require('../models/majorModel');
-
+var nodemailer = require('nodemailer');
+const EMAIL_USERNAME = "ubertutor018175";
+const EMAIL_PASSWORD = "Ubertutor123";
 /* GET users listing. */
 router.get('/', function (req, res, next) {
 
@@ -331,7 +333,7 @@ router.put('/recoverMajor', function (req, res) {
     .then(data => {
       const payload = { id: id };
       const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Recover complete", });
+      res.json({ code: 1, info: { data, token, message: "Recover complete", } });
     })
     .catch(err => {
       res.json({
@@ -342,6 +344,79 @@ router.put('/recoverMajor', function (req, res) {
           message: err,
         }
       });
+    })
+})
+
+router.put('/banAccount', function (req, res) {
+  let body = req.body
+  console.log(body.status);
+  userModel.changeAccountStatus(body)
+    .then(data => {
+      const payload = { id: body.id };
+      const token = jwt.sign(payload, '1612018_1612175')
+
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: `${EMAIL_USERNAME}`,
+          pass: `${EMAIL_PASSWORD}`,
+        },
+      });
+      let mailOptions;
+      if (body.status === 'true') {
+        mailOptions = {
+          from: EMAIL_USERNAME,
+          to: `${body.email}`,
+          subject: 'Your account has been restored',
+          text:
+            'Your account has been restored and you can now login to use the site as usual.\n\n'
+        };
+      }
+      else {
+        mailOptions = {
+          from: EMAIL_USERNAME,
+          to: `${body.email}`,
+          subject: 'Your account has been suspended',
+          text:
+            'Your account is currently banned because of negative reports.\n\n'
+            + 'This state will be pernament until you have provided enough evidence to convince us to restore your account.\n\n'
+            + 'If you have any questions, please reply this mail thread.\n',
+        };
+      }
+      console.log(mailOptions);
+      transporter.sendMail(mailOptions, (err, response) => {
+        if (err) {
+          res.json({
+            code: 0,
+            info: {
+              data: null,
+              token: null,
+              message: err,
+            }
+          })
+        } else {
+          res.json({
+            code: 1,
+            info: {
+              data,
+              token: token,
+              message: "User status changed to" + body.status,
+              response,
+            }
+          })
+        }
+      });
+
+    })
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          token: null,
+          message: err,
+        }
+      })
     })
 })
 

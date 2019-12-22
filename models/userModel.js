@@ -39,5 +39,8 @@ module.exports = {
     },
     getSkillList: queryOption => {
         return db.query(`SELECT * FROM SKILLs WHERE skill_tag LIKE '%${queryOption.searchStr}%' OR skill LIKE '%${queryOption.searchStr}%'`);
+    },
+    changeAccountStatus: (body) => {
+        return db.query(`update users set status = ${body.status} where id = ${body.id}`);
     }
 }
