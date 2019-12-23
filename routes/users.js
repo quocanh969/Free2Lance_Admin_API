@@ -525,4 +525,75 @@ router.post('/getContractDetail', (req, res) => {
       })
     })
 })
+
+router.get('/getIncomeReport', (req, res) => {
+  let type = req.body.type;
+  type = Number.parseInt(type);
+  if (type === 0) {
+    contractModel.getIncome()
+      .then(data => {
+        res.json({
+          code: 1,
+          info: {
+            data,
+            message: "Return all income",
+          }
+        })
+      })
+      .catch(err => {
+        res.json({
+          code: 0,
+          info: {
+            err,
+            message: "Failed",
+          }
+        })
+      })
+  }
+  else if (type === 1) {
+    let { month, year } = req.body;
+    contractModel.getIncomeByMonth(year, month)
+      .then(data => {
+        res.json({
+          code: 1,
+          info: {
+            data,
+            message: "Return incomes in " + month + "/" + year,
+          }
+        })
+      })
+      .catch(err => {
+        res.json({
+          code: 0,
+          info: {
+            err,
+            message: "Failed",
+          }
+        })
+      })
+  }
+  else {
+    let { days } = req.body;
+    contractModel.getIncomeFromLastNDays(days)
+      .then(data => {
+        res.json({
+          code: 1,
+          info: {
+            data,
+            message: "Return incomes from last " + days + " days",
+          }
+        })
+      })
+      .catch(err => {
+        res.json({
+          code: 0,
+          info: {
+            err,
+            message: "Failed",
+          }
+        })
+      })
+  }
+})
+
 module.exports = router;
