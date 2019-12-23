@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
+var _ = require('lodash');
 var jwt = require('jsonwebtoken');
 var userModel = require('../models/userModel');
 var skillModel = require('../models/skillModel');
 var majorModel = require('../models/majorModel');
+var contractModel = require('../models/contractModel');
+
 var nodemailer = require('nodemailer');
 const EMAIL_USERNAME = "ubertutor018175";
 const EMAIL_PASSWORD = "Ubertutor123";
@@ -22,19 +25,20 @@ router.get('/', function (req, res, next) {
 
 router.post('/getUserList', function (req, res) {
   let { id, queryOption } = req.body;
-
+  queryOption.page = Number.parseInt(queryOption.page);
   userModel.getUserList(queryOption)
     .then((data) => {
 
       // Cập nhật token mới nhất
       let payload = { id: id };
       token = jwt.sign(payload, '1612018_1612175');
-
+      let count = data.length;
+      data = data.slice(queryOption.page * 10, queryOption.page * 10 + 10)
       res.json({
         code: 1,
         info: {
+          total: count,
           message: "Success",
-          token,
           data,
         }
       })
@@ -54,19 +58,18 @@ router.post('/getUserList', function (req, res) {
 router.post('/getSkillList', function (req, res) {
 
   let { id, queryOption } = req.body;
-
-  userModel.getSkillList(queryOption)
+  queryOption.page = Number.parseInt(queryOption.page);
+  skillModel.getSkillList(queryOption)
     .then((data) => {
-
-      // Cập nhật token mới nhất
-      let payload = { id: id };
-      token = jwt.sign(payload, '1612018_1612175');
+      let count = data.length;
+      console.log(count);
+      data = data.slice(queryOption.page * 10, queryOption.page * 10 + 10);
 
       res.json({
         code: 1,
         info: {
           message: "Success",
-          token,
+          total: count,
           data,
         }
       })
@@ -77,7 +80,7 @@ router.post('/getSkillList', function (req, res) {
         info: {
           message: "Error",
           token: null,
-          data: [],
+          error,
         }
       })
     });
@@ -89,22 +92,47 @@ router.post('/getDetailUser', function (req, res) {
   role = Number.parseInt(role);
   userModel.getDetail(id, role)
     .then((data) => {
-      console.log('succes');
-      // Cập nhật token mới nhất
-      let payload = { id: id };
-      token = jwt.sign(payload, '1612018_1612175');
+      console.log(data);
+      if (role === 1) {
+        data = _.groupBy(data, "id");
+        _.forEach(data, (value, key) => {
+          const skills = _.map(value, item => {
+            const { skill, id_skill, skill_tag } = item;
+            return { skill, id_skill, skill_tag };
+          })
+          console.log(skills);
+          const temp = {
+            id: value[0].id,
+            name: value[0].name,
+            password: value[0].password,
+            email: value[0].email,
+            yob: value[0].yob,
+            gender: value[0].gender,
+            id_area: value[0].areaCode,
+            area: value[0].area,
+            phone: value[0].phone,
+            price: value[0].price,
+            evaluation: value[0].evaluation,
+            avatarLink: value[0].avatarLink,
+            id_major: value[0].major,
+            major_name: value[0].major_name,
+            skills,
+          }
+          data = temp;
+        })
+      }
+      console.log("Return: ");
       console.log(data);
       res.json({
         code: 1,
         info: {
           message: "Success",
-          token,
-          data: data[0],
+          token: null,
+          data,
         }
       })
     })
     .catch((error) => {
-      console.log('error');
       res.json({
         code: 0,
         info: {
@@ -420,4 +448,81 @@ router.put('/banAccount', function (req, res) {
     })
 })
 
+router.post('/getMajorList', (req, res) => {
+  let { queryOption } = req.body;
+  queryOption.page = Number.parseInt(queryOption.page)
+  queryOption.page = Number.parseInt(queryOption.page);
+  majorModel.getMajorList(queryOption)
+    .then(data => {
+      let count = data.length;
+      data = data.slice(queryOption.page * 10, queryOption.page * 10 + 10);
+      res.json({
+        code: 1,
+        info: {
+          total: count,
+          data,
+          message: "Get list of majors successfully",
+        }
+      })
+    })
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          data: null,
+          message: err,
+        }
+      })
+    })
+})
+
+router.post('/getContractList', (req, res) => {
+  let { queryOption } = req.body;
+  queryOption.page = Number.parseInt(queryOption.page);
+  contractModel.getContractList(queryOption)
+    .then(data => {
+      let count = data.length;
+      data = data.slice(queryOption.page * 4, queryOption.page * 4 + 4);
+      res.json({
+        code: 1,
+        info: {
+          total: count,
+          data,
+          message: "1",
+        }
+      })
+    })
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: '0',
+        }
+      })
+    })
+})
+
+router.post('/getContractDetail', (req, res) => {
+  let id = req.body.id;
+  contractModel.getContractDetail(id)
+    .then(data => {
+      res.json({
+        code: 1,
+        info: {
+          data,
+          message: "1",
+        }
+      })
+    })
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "0",
+        }
+      })
+    })
+})
 module.exports = router;

@@ -16,5 +16,8 @@ module.exports = {
     },
     recoverMajor: (id, id_major) => {
         return db.query(`update majors set status = ${true}, isEditting = ${false} where id = ${id_major}`);
+    },
+    getMajorList: (queryOption) => {
+        return db.query(`select * from majors where name like '%${queryOption.searchStr}%'`);
     }
 }

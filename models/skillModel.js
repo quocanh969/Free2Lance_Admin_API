@@ -16,5 +16,8 @@ module.exports = {
     },
     recoverSkill: (id, id_skill) => {
         return db.query(`update skills set status = ${true}, isEditting = ${false} where id_skill = ${id_skill}`);
+    },
+    getSkillList: (queryOption) => {
+        return db.query(`select * from skills where skill like '%${queryOption.searchStr}%' or skill_tag like '%${queryOption.searchStr}%'`);
     }
 }
