@@ -37,7 +37,7 @@ passport.use(new LocalStrategy(
     }
 ));
 
-passport.use('GetById', new JWTStrategy(
+passport.use(new JWTStrategy(
     {
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
         secretOrKey: '1612018_1612175',
