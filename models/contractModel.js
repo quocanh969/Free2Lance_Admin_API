@@ -16,12 +16,12 @@ module.exports = {
                         where c.id_learner = u1.id and c.id_tutor = u2.id and c.id = ${id}`);
     },
     getIncome: () => {
-        return db.query(`select sum(totalPrice) from contracts where status = ${2}`);
+        return db.query(`select * from contracts where status = ${2}`);
     },
     getIncomeByMonth: (year, month) => {
-        return db.query(`select sum(totalPrice) from contracts where status = ${2} and Month(EndDate) = ${month} and Year(EndDate) = ${year}`);
+        return db.query(`select * from contracts where status = ${2} and Month(EndDate) = ${month} and Year(EndDate) = ${year}`);
     },
     getIncomeFromLastNDays: (days) => {
-        return db.query(`select sum(totalPrice) from contracts where status = ${2} and EndDate between curdate() - interval ${days} day and curdate()`);
+        return db.query(`select * from contracts where status = ${2} and EndDate between curdate() - interval ${days} day and curdate()`);
     }
 }
