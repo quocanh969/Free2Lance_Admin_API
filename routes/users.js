@@ -527,9 +527,10 @@ router.post('/getContractDetail', (req, res) => {
 
 router.get('/getIncomeReport', (req, res) => {
   let type = req.body.type;
+  let id_tutor = req.body.id;
   type = Number.parseInt(type);
   if (type === 0) {
-    contractModel.getIncome()
+    contractModel.getIncome(id_tutor)
       .then(data => {
         res.json({
           code: 1,
@@ -551,7 +552,7 @@ router.get('/getIncomeReport', (req, res) => {
   }
   else if (type === 1) {
     let { month, year } = req.body;
-    contractModel.getIncomeByMonth(year, month)
+    contractModel.getIncomeByMonth(id_tutor, year, month)
       .then(data => {
         res.json({
           code: 1,
@@ -573,7 +574,7 @@ router.get('/getIncomeReport', (req, res) => {
   }
   else {
     let { days } = req.body;
-    contractModel.getIncomeFromLastNDays(days)
+    contractModel.getIncomeFromLastNDays(id_tutor, days)
       .then(data => {
         res.json({
           code: 1,
