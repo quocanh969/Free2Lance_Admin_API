@@ -192,23 +192,22 @@ router.put('/deleteSkill', function (req, res) {
   let id = req.body.id;
   skillModel.deleteSkill(id, req.body.id_skill)
     .then(data => {
-      const payload = { id: id };
-      const token = jwt.sign(payload, '1612018_1612175');
-      res.json({
-        code: 1,
-        info: {
-          data,
-          token,
-          message: "Delete completed",
-        }
-      });
+      userModel.deleteTutorSkill(req.body.id_skill)
+        .then(data2 => {
+          res.json({
+            code: 1,
+            info: {
+              data2,
+              message: "Delete completed",
+            }
+          });
+        })
     })
     .catch(err => {
       res.json({
         code: 0,
         info: {
           data: null,
-          token: null,
           message: err,
         }
       });
@@ -339,16 +338,16 @@ router.put('/deleteMajor', function (req, res) {
   let id = req.body.id;
   majorModel.deleteMajor(id, req.body.id_major)
     .then(data => {
-      const payload = { id: id };
-      const token = jwt.sign(payload, '1612018_1612175');
-      res.json({ data, token, message: "Delete complete", });
+      userModel.deleteTutorMajor(req.body.id_major)
+        .then(data2 => {
+          res.json({ data2, message: "Delete complete", });
+        })
     })
     .catch(err => {
       res.json({
         code: 0,
         info: {
           data: null,
-          token: null,
           message: err,
         }
       });

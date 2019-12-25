@@ -42,5 +42,11 @@ module.exports = {
     },
     changeAccountStatus: (body) => {
         return db.query(`update users set status = ${body.status} where id = ${body.id}`);
+    },
+    deleteTutorSkill: (id_skill) => {
+        return db.query(`delete from skill_table where skill_code = ${id_skill}`)
+    },
+    deleteTutorMajor: (id_major) => {
+        return db.query(`update tutors set major = ${1} where major = ${id_major}`)
     }
 }
