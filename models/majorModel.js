@@ -12,9 +12,12 @@ module.exports = {
         return db.query(`update majors set name = '${majorObj.name}', icoUrl = '${majorObj.icoUrl}', isEditting = ${false} where id = ${majorObj.id_major}`);
     },
     deleteMajor: (id, id_major) => {
-        return db.query(`update majors set status = ${false}, isEditting = ${false} where id = ${id_major}`);
+        return db.query(`update majors set status = ${false}, isEditting = ${false} where id = ${id_major} and id != ${1}`);
     },
     recoverMajor: (id, id_major) => {
         return db.query(`update majors set status = ${true}, isEditting = ${false} where id = ${id_major}`);
+    },
+    getMajorList: (queryOption) => {
+        return db.query(`select * from majors where name like '%${queryOption.searchStr}%' and id != ${1}`);
     }
 }
