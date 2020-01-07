@@ -23,5 +23,11 @@ module.exports = {
     },
     getIncomeFromLastNDays: (id_tutor, days) => {
         return db.query(`select * from contracts where status = ${2} and EndDate between curdate() - interval ${days} day and curdate() and id_tutor = ${id_tutor}`);
+    },
+    getActiveContractsWithComplains: () => {
+        return db.query(`select * from contracts where status = ${1} and complain != ''`);
+    },
+    cancelAnActiveContract: (id) => {
+        return db.query(`update contracts set status = ${4} where id = ${id}`);
     }
 }

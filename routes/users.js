@@ -596,4 +596,47 @@ router.get('/getIncomeReport', (req, res) => {
   }
 })
 
+router.get('/getComplainedContracts', (req, res) => {
+  contractModel.getActiveContractsWithComplains().then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "Complained contracts",
+      }
+    })
+  })
+  .catch(err => {
+    res.json({
+      code: 0,
+      info:{
+        err,
+        message: "Get failed",
+      }
+    })
+  })
+})
+
+router.put('/cancelAnActiveContract', (req, res) => {
+  let id = req.body.id_contract;
+  contractModel.cancelAnActiveContract(id).then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "Cancelled",
+      }
+    })
+  })
+  .catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "Cancellation failed",
+      }
+    })
+  })
+})
+
 module.exports = router;
