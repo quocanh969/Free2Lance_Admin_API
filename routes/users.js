@@ -374,7 +374,9 @@ router.put('/recoverMajor', function (req, res) {
     })
 })
 
-router.put('/banAccount', function (req, res) {
+router.put('/changeAccountStatus', function (req, res) {
+  // truyền vào body true/ false sẽ tự động chạy ban/ restore tương ứng.
+  // xử lí nút trạng thái bằng cách xét {account.status ? nút ban : nút restore} ?
   let body = req.body
   console.log(body.status);
   userModel.changeAccountStatus(body)
