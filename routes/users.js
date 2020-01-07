@@ -608,15 +608,15 @@ router.get('/getComplainedContracts', (req, res) => {
       }
     })
   })
-  .catch(err => {
-    res.json({
-      code: 0,
-      info:{
-        err,
-        message: "Get failed",
-      }
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Get failed",
+        }
+      })
     })
-  })
 })
 
 router.put('/cancelAnActiveContract', (req, res) => {
@@ -630,12 +630,34 @@ router.put('/cancelAnActiveContract', (req, res) => {
       }
     })
   })
-  .catch(err => {
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Cancellation failed",
+        }
+      })
+    })
+})
+
+router.post('/getStatisticByYear', (req, res) => {
+  let { year } = req.body;
+  year = Number.parseInt(year);
+  contractModel.getIncomeStatByYear(year).then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "1",
+      }
+    })
+  }).catch(err => {
     res.json({
       code: 0,
       info: {
         err,
-        message: "Cancellation failed",
+        message: "0",
       }
     })
   })

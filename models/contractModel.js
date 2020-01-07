@@ -29,5 +29,30 @@ module.exports = {
     },
     cancelAnActiveContract: (id) => {
         return db.query(`update contracts set status = ${4} where id = ${id}`);
+    },
+    getIncomeStatByYear: (year) => {
+        return db.query(`
+        SELECT
+        idMonth,
+        MONTHNAME(STR_TO_DATE(idMonth, '%m')) as m,
+        IFNULL(sum(contracts.totalPrice), 0) as total
+      FROM Contracts
+      RIGHT JOIN (
+        SELECT 1 as idMonth
+        UNION SELECT 2 as idMonth
+        UNION SELECT 3 as idMonth
+        UNION SELECT 4 as idMonth
+        UNION SELECT 5 as idMonth
+        UNION SELECT 6 as idMonth
+        UNION SELECT 7 as idMonth
+        UNION SELECT 8 as idMonth
+        UNION SELECT 9 as idMonth
+        UNION SELECT 10 as idMonth
+        UNION SELECT 11 as idMonth
+        UNION SELECT 12 as idMonth
+      ) as Month
+      ON Month.idMonth = month(EndDate) and year(contracts.EndDate) = ${year} and status = 2
+      GROUP BY Month.idMonth order by idMonth    
+        `)
     }
 }
