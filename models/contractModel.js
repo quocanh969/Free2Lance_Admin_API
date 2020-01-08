@@ -28,6 +28,13 @@ module.exports = {
         group by id_tutor order by total desc limit 5;
         `);
     },
+    getTutorByDate: (dateStr) => {
+        return db.query(`
+        select id_tutor, u.name, u.email, m.name as major, t.evaluation,sum(totalPrice) as total from contracts as c, tutors as t, users as u, majors as m
+        where c.status = 2 and u.status = 1 and u.id = c.id_tutor and u.id = t.id_user and m.id = t.major and c.EndDate = '${dateStr}'
+        group by id_tutor order by total desc limit 3;
+        `)
+    },
     getMajorByIncomeFromLastNDays: (days) => {
         return db.query(`select m.*, sum(c.totalPrice) as total from majors as m, contracts as c
         where c.major = m.id and c.EndDate between curdate() - interval ${days} day and curdate() group by c.major order by total desc limit 3;`)
