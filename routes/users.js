@@ -552,8 +552,7 @@ router.post('/getTopTutorsByIncome', (req, res) => {
 
 router.post('/getTopTutorsByIncomeByDate', (req, res) => {
   let date = req.body.date;
-  date = Number.parseInt(date);
-  contractModel.getTutorByIncomeFromLastNDays(date).then(data => {
+  contractModel.getTutorByDate(date).then(data => {
     res.json({
       code: 1,
       info: {
