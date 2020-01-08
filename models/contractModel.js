@@ -79,6 +79,9 @@ module.exports = {
             select year(EndDate) year, month(EndDate) month, day(EndDate) day, sum(totalPrice) as total from contracts where year(EndDate) = ${year} and month(EndDate) = ${month} group by day;
         `)
     },
+    getIncomeEachYear: () => {
+        return db.query(`select year(EndDate) as year, sum(totalPrice) as total from contracts where status = 2 group by year order by year asc;`)
+    },
     getContracts: () => {
         return db.query('select * from contracts');
     },

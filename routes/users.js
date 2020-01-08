@@ -801,6 +801,40 @@ router.post('/getStatisticByMonth', (req, res) => {
   })
 })
 
+router.post('/getIncomeEachYear', (req, res) => {
+  contractModel.getIncomeEachYear().then(data => {
+    let arr = new Array(20);
+    let initYr = 2010;
+    for (let i = 0; i < 20; i++) {
+      arr[i] = {
+        year: initYr,
+        total: 0,
+      };
+      for (let j = 0; j < data.length; j++) {
+        if (Number.parseInt(data[j].year) === initYr) {
+          arr[i].total = data[j].total;
+        }
+      }
+      initYr++;
+    }
+    res.json({
+      code: 1,
+      info: {
+        data: arr,
+        message: "1",
+      }
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: 0,
+      }
+    })
+  })
+})
+
 let isLeapYear = (year) => {
   return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
 }
