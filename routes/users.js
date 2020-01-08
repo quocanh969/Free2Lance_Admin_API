@@ -626,15 +626,32 @@ router.put('/cancelAnActiveContract', (req, res) => {
            We hope you soon find a more suitable learner and we are sorry for your bad experience.\n\n`
       };
       transporter.sendMail(mailOptionsLearner, (err, response) => {
-        console.log("YES");
-
+        if (err) {
+          res.json({
+            code: 0,
+            info: {
+              err,
+              response,
+              message: "Sending to learner failed, terminate!",
+            }
+          })
+        }
         transporter.sendMail(mailOptionsTutor, (err, response) => {
-
+          if (err) {
+            res.json({
+              code: 0,
+              info: {
+                err,
+                response,
+                message: "Sending to tutor failed",
+              }
+            })
+          }
           res.json({
             code: 1,
             info: {
               data,
-              message: "Cancelled and mail sent",
+              message: "Cancellation and mail sent to both",
             }
           })
         })
@@ -663,12 +680,59 @@ router.put('/cancelAnActiveContract', (req, res) => {
 router.put('/removeComplain', (req, res) => {
   let id = req.body.id_contract;
   contractModel.removeComplain(id).then(data => {
-    res.json({
-      code: 1,
-      info: {
-        data,
-        message: "Removed",
-      }
+    userModel.getLearerAndTutorByContract(id).then(data2 => {
+      const learnerEmail = data2[0].email;
+      const learnerName = data2[0].name;
+      const tutorEmail = data2[1].email;
+      const tutorName = data2[1].name;
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: `${EMAIL_USERNAME}`,
+          pass: `${EMAIL_PASSWORD}`,
+        },
+      });
+      let mailOptionsLearner = {
+        from: EMAIL_USERNAME,
+        to: `${learnerEmail}`,
+        subject: 'Your complain on a contract has been dismissed',
+        text:
+          `Hello ${learnerName}. Look like you got a complain on a contract with tutor ${tutorName}.
+           We are sorry to inform you that we will not resolve this kind of complain. Therefore, your contract remain active.
+           You can either cancel your contract early (but you will have to pay) or try to resolve your problem with your tutor.
+           Here is your tutor's email address: ${tutorEmail}.
+
+           Have a nice day!\n\n`,
+      };
+      transporter.sendMail(mailOptionsLearner, (err, response) => {
+        if (err) {
+          res.json({
+            code: 0,
+            info: {
+              message: "Failed sending mail",
+              err,
+              response
+            }
+          })
+        } else {
+          res.json({
+            code: 1,
+            info: {
+              data2,
+              message: "Mail sent",
+              response,
+            }
+          })
+        }
+      })
+    }).catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Failed"
+        }
+      })
     })
   })
     .catch(err => {
