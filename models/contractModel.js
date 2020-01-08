@@ -28,6 +28,10 @@ module.exports = {
         group by id_tutor order by total desc limit 5;
         `);
     },
+    getMajorByIncomeFromLastNDays: (days) => {
+        return db.query(`select m.*, sum(c.totalPrice) as total from majors as m, contracts as c
+        where c.major = m.id and c.EndDate between curdate() - interval ${days} day and curdate() group by c.major order by total desc limit 3;`)
+    },
     getActiveContractsWithComplains: () => {
         return db.query(`select * from contracts where status = ${1} and complain != ''`);
     },

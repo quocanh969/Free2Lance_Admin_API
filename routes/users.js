@@ -382,8 +382,7 @@ router.put('/changeAccountStatus', function (req, res) {
   userModel.changeAccountStatus(body)
     .then(data => {
       const payload = { id: body.id };
-      const token = jwt.sign(payload, '1612018_1612175')
-
+      const token = jwt.sign(payload, '1612018_1612175');
       const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
@@ -418,9 +417,10 @@ router.put('/changeAccountStatus', function (req, res) {
           res.json({
             code: 0,
             info: {
-              data: null,
+              data: "NULL",
               token: null,
               message: err,
+              response
             }
           })
         } else {
@@ -527,10 +527,32 @@ router.post('/getContractDetail', (req, res) => {
     })
 })
 
-router.post('/getTopByIncome', (req, res) => {
+router.post('/getTopTutorsByIncome', (req, res) => {
   let days = req.body.days;
   days = Number.parseInt(days);
   contractModel.getTutorByIncomeFromLastNDays(days).then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "1"
+      }
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        message: "0",
+        err,
+      }
+    })
+  })
+})
+
+router.post('/getTopMajorsByIncome', (req, res) => {
+  let days = req.body.days;
+  days = Number.parseInt(days);
+  contractModel.getMajorByIncomeFromLastNDays(days).then(data => {
     res.json({
       code: 1,
       info: {
@@ -578,13 +600,43 @@ router.put('/cancelAnActiveContract', (req, res) => {
       const learnerName = data2[0].name;
       const tutorEmail = data2[1].email;
       const tutorName = data2[1].name;
-      console.log(data2[0]);
-      res.json({
-        code: 1,
-        info: {
-          data,
-          message: "Cancelled",
-        }
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: `${EMAIL_USERNAME}`,
+          pass: `${EMAIL_PASSWORD}`,
+        },
+      });
+      let mailOptionsLearner = {
+        from: EMAIL_USERNAME,
+        to: `${learnerEmail}`,
+        subject: 'Your contract has been terminated',
+        text:
+          `Your contract with tutor ${tutorName} has been terminated due to your complain about the tutor.\n
+           We hope you soon find a more suitable tutor and we are sorry for your bad experience.\n\n`
+      };
+      let mailOptionsTutor = {
+        from: EMAIL_USERNAME,
+        to: `${tutorEmail}`,
+        subject: 'Your contract has been terminated',
+        text:
+          `Your contract with learner ${learnerName} has been terminated due to his or her complain about your service.\n
+           If you have any questions, please contact us to discuss more about this problem.
+           We hope you soon find a more suitable learner and we are sorry for your bad experience.\n\n`
+      };
+      transporter.sendMail(mailOptionsLearner, (err, response) => {
+        console.log("YES");
+
+        transporter.sendMail(mailOptionsTutor, (err, response) => {
+
+          res.json({
+            code: 1,
+            info: {
+              data,
+              message: "Cancelled and mail sent",
+            }
+          })
+        })
       })
     }).catch(err => {
       res.json({
@@ -596,14 +648,14 @@ router.put('/cancelAnActiveContract', (req, res) => {
       })
     })
   }).catch(err => {
-      res.json({
-        code: 0,
-        info: {
-          err,
-          message: "Cancellation failed",
-        }
-      })
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "Cancellation failed",
+      }
     })
+  })
 })
 
 router.post('/getStatisticByYear', (req, res) => {
