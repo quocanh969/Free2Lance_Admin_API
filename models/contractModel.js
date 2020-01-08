@@ -38,6 +38,9 @@ module.exports = {
     cancelAnActiveContract: (id) => {
         return db.query(`update contracts set status = ${4} where id = ${id} and status = ${1}`);
     },
+    removeComplain: (id) => {
+        return db.query(`update contracts set complain = '' where id = ${id}`);
+    },
     getIncomeStatByYear: (year) => {
         return db.query(`
         SELECT
@@ -75,5 +78,20 @@ module.exports = {
         return db.query(`
             select year(EndDate) year, month(EndDate) month, day(EndDate) day, sum(totalPrice) as total from contracts where year(EndDate) = ${year} and month(EndDate) = ${month} group by day;
         `)
-    }
+    },
+    getContracts: () => {
+        return db.query('select * from contracts');
+    },
+    getPendingContracts: () => {
+        return db.query('select * from contracts where status = 0');
+    },
+    getActiveContracts: () => {
+        return db.query('select * from contracts where status = 1');
+    },
+    getExpiredContracts: () => {
+        return db.query('select * from contracts where status = 3');
+    },
+    getHistoryContracts: () => {
+        return db.query('select * from contracts where status = 2');
+    },
 }
