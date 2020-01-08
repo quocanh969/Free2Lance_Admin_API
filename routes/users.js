@@ -33,7 +33,7 @@ router.post('/getUserList', function (req, res) {
       let payload = { id: id };
       token = jwt.sign(payload, '1612018_1612175');
       let count = data.length;
-      data = data.slice(queryOption.page * 10, queryOption.page * 10 + 10)
+      data = data.slice(queryOption.page * 4, queryOption.page * 4 + 4)
       res.json({
         code: 1,
         info: {
