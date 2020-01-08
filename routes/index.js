@@ -2,6 +2,7 @@ var express = require('express');
 var jwt = require('jsonwebtoken');
 var passport = require('passport');
 var userModel = require('../models/userModel');
+var contractModel = require('../models/contractModel');
 var router = express.Router();
 
 /* GET home page. */
@@ -73,6 +74,112 @@ router.post('/register', (req, res) => {
       res.end('Có lỗi');
     });
 
+});
+
+
+router.post('/getContracts', function (req, res, next) {
+  var page = Number.parseInt(req.body.page);
+  contractModel.getContracts()
+    .then((data) => {
+      let count = data.length;
+      data = data.slice(page*4,page*4+4);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          total: count,
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        code: 0,
+      })
+    });
+});
+
+router.post('/getPendingContracts', function (req, res, next) {
+  var page = Number.parseInt(req.body.page);
+  contractModel.getPendingContracts()
+    .then((data) => {
+      let count = data.length;
+      data=data.slice(page*4, page*4+ 4);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          total: count,
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        code: 0,
+      })
+    });
+});
+
+router.post('/getActiveContracts', function (req, res, next) {
+  var page = Number.parseInt(req.body.page);
+  contractModel.getActiveContracts()
+    .then((data) => {
+      let count = data.length;
+      data = data.slice(page*4, page*4 + 4);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          total: count,
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        code: 0,
+      })
+    });
+});
+
+router.post('/getExpiredContracts', function (req, res, next) {
+  var page = Number.parseInt(req.body.page);
+  contractModel.getExpiredContracts()
+    .then((data) => {
+      let count = data.length;
+      data = data.slice(page*4, page*4 + 4);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          total: count,
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        code: 0,
+      })
+    });
+});
+
+router.post('/getHistoryContracts', function (req, res, next) {
+  var page = Number.parseInt(req.body.page);
+  contractModel.getHistoryContracts()
+    .then((data) => {
+      let count = data.length;
+      data = data.slice(page*4, page*4 + 4);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          total: count,
+        }
+      });
+    })
+    .catch((error) => {
+      res.json({
+        code: 0,
+      })
+    });
 });
 
 module.exports = router;

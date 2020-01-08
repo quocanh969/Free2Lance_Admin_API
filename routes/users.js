@@ -109,6 +109,7 @@ router.post('/getDetailUser', function (req, res) {
             yob: value[0].yob,
             gender: value[0].gender,
             id_area: value[0].areaCode,
+            level: value[0].levelTeaching,
             area: value[0].area,
             phone: value[0].phone,
             price: value[0].price,
@@ -636,6 +637,29 @@ router.put('/cancelAnActiveContract', (req, res) => {
         info: {
           err,
           message: "Cancellation failed",
+        }
+      })
+    })
+})
+
+
+router.put('/removeComplain', (req, res) => {
+  let id = req.body.id_contract;
+  contractModel.removeComplain(id).then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "Removed",
+      }
+    })
+  })
+    .catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Removement failed",
         }
       })
     })
