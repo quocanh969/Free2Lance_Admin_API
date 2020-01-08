@@ -663,4 +663,105 @@ router.post('/getStatisticByYear', (req, res) => {
   })
 })
 
+router.post('/getStatisticByWeek', (req, res) => {
+  let { year } = req.body;
+  year = Number.parseInt(year);
+  contractModel.getIncomeStatByWeek(year).then(data => {
+    let arr = new Array(52);
+    for (let i = 0; i < 52; i++) {
+      let aWeek = {
+        yearId: year,
+        weekId: i + 1,
+        total: 0,
+      }
+      arr[i] = aWeek;
+      for (let j = 0; j < data.length; j++) {
+        if (Number.parseInt(data[j].week) === i + 1) {
+          arr[i].total = Number.parseInt(data[j].total)
+        }
+      }
+    }
+    res.json({
+      code: 1,
+      info: {
+        data: arr,
+        message: "Success"
+      }
+    });
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "Failed"
+      }
+    })
+  })
+})
+
+router.post('/getStatisticByMonth', (req, res) => {
+  let { year, month } = req.body;
+  year = Number.parseInt(year);
+  month = Number.parseInt(month);
+  contractModel.getIncomeStatByMonth(year, month).then(data => {
+    let count = 0;
+    switch (month) {
+      case 1:
+      case 3:
+      case 5:
+      case 7:
+      case 8:
+      case 10:
+      case 12:
+        count = 31; break;
+      case 4:
+      case 6:
+      case 9:
+      case 11:
+        count = 30; break;
+      case 2:
+        if (isLeapYear(year))
+          count = 29;
+        else
+          count = 28;
+        break;
+      default: break;
+    }
+    let arr = new Array(count);
+    for (let i = 0; i < count; i++) {
+      let aDay = {
+        yearId: year,
+        monthId: month,
+        dayId: i + 1,
+        total: 0,
+      }
+      arr[i] = aDay;
+      for (let j = 0; j < data.length; j++) {
+        if (Number.parseInt(data[j].day) === i + 1) {
+          arr[i].total = Number.parseInt(data[j].total)
+        }
+      }
+    }
+    res.json({
+      code: 1,
+      info: {
+        message: "Success",
+        data: arr,
+      }
+    });
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: failed
+      }
+    })
+  })
+})
+
+let isLeapYear = (year) => {
+  return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+}
+
 module.exports = router;

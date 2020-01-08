@@ -54,5 +54,18 @@ module.exports = {
       ON Month.idMonth = month(EndDate) and year(contracts.EndDate) = ${year} and status = 2
       GROUP BY Month.idMonth order by idMonth    
         `)
+    },
+    getIncomeStatByWeek: (year) => {
+        return db.query(`
+        SELECT year(EndDate) as year, weekofyear(EndDate) as week, ifnull(sum(totalPrice), 0) as total
+        FROM contracts
+        where year(EndDate) = ${year} and status = 2
+        GROUP BY YEAR(EndDate), WEEKOFYEAR(EndDate) order by year asc, week asc;
+        `);
+    },
+    getIncomeStatByMonth: (year, month) => {
+        return db.query(`
+            select year(EndDate) year, month(EndDate) month, day(EndDate) day, sum(totalPrice) as total from contracts where year(EndDate) = ${year} and month(EndDate) = ${month} group by day;
+        `)
     }
 }
