@@ -527,75 +527,26 @@ router.post('/getContractDetail', (req, res) => {
     })
 })
 
-router.get('/getIncomeReport', (req, res) => {
-  let type = req.body.type;
-  let id_tutor = req.body.id;
-  type = Number.parseInt(type);
-  if (type === 0) {
-    contractModel.getIncome(id_tutor)
-      .then(data => {
-        res.json({
-          code: 1,
-          info: {
-            data,
-            message: "Return all income",
-          }
-        })
-      })
-      .catch(err => {
-        res.json({
-          code: 0,
-          info: {
-            err,
-            message: "Failed",
-          }
-        })
-      })
-  }
-  else if (type === 1) {
-    let { month, year } = req.body;
-    contractModel.getIncomeByMonth(id_tutor, year, month)
-      .then(data => {
-        res.json({
-          code: 1,
-          info: {
-            data,
-            message: "Return incomes in " + month + "/" + year,
-          }
-        })
-      })
-      .catch(err => {
-        res.json({
-          code: 0,
-          info: {
-            err,
-            message: "Failed",
-          }
-        })
-      })
-  }
-  else {
-    let { days } = req.body;
-    contractModel.getIncomeFromLastNDays(id_tutor, days)
-      .then(data => {
-        res.json({
-          code: 1,
-          info: {
-            data,
-            message: "Return incomes from last " + days + " days",
-          }
-        })
-      })
-      .catch(err => {
-        res.json({
-          code: 0,
-          info: {
-            err,
-            message: "Failed",
-          }
-        })
-      })
-  }
+router.post('/getTopByIncome', (req, res) => {
+  let days = req.body.days;
+  days = Number.parseInt(days);
+  contractModel.getTutorByIncomeFromLastNDays(days).then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "1"
+      }
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        message: "0",
+        err,
+      }
+    })
+  })
 })
 
 router.get('/getComplainedContracts', (req, res) => {
@@ -622,15 +573,29 @@ router.get('/getComplainedContracts', (req, res) => {
 router.put('/cancelAnActiveContract', (req, res) => {
   let id = req.body.id_contract;
   contractModel.cancelAnActiveContract(id).then(data => {
-    res.json({
-      code: 1,
-      info: {
-        data,
-        message: "Cancelled",
-      }
+    userModel.getLearerAndTutorByContract(id).then(data2 => {
+      const learnerEmail = data2[0].email;
+      const learnerName = data2[0].name;
+      const tutorEmail = data2[1].email;
+      const tutorName = data2[1].name;
+      console.log(data2[0]);
+      res.json({
+        code: 1,
+        info: {
+          data,
+          message: "Cancelled",
+        }
+      })
+    }).catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Mail sent failed"
+        },
+      })
     })
-  })
-    .catch(err => {
+  }).catch(err => {
       res.json({
         code: 0,
         info: {

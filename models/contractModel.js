@@ -21,14 +21,18 @@ module.exports = {
     getIncomeByMonth: (id_tutor, year, month) => {
         return db.query(`select * from contracts where status = ${2} and Month(EndDate) = ${month} and Year(EndDate) = ${year} and id_tutor = ${id_tutor}`);
     },
-    getIncomeFromLastNDays: (id_tutor, days) => {
-        return db.query(`select * from contracts where status = ${2} and EndDate between curdate() - interval ${days} day and curdate() and id_tutor = ${id_tutor}`);
+    getTutorByIncomeFromLastNDays: (days) => {
+        return db.query(`
+        select id_tutor, u.name, u.email, m.name as major, t.evaluation,sum(totalPrice) as total from contracts as c, tutors as t, users as u, majors as m 
+        where c.status = 2 and u.status = 1 and u.id = c.id_tutor and u.id = t.id_user and m.id = t.major and c.EndDate between curdate() - interval ${days} day and curdate()
+        group by id_tutor order by total desc limit 5;
+        `);
     },
     getActiveContractsWithComplains: () => {
         return db.query(`select * from contracts where status = ${1} and complain != ''`);
     },
     cancelAnActiveContract: (id) => {
-        return db.query(`update contracts set status = ${4} where id = ${id}`);
+        return db.query(`update contracts set status = ${4} where id = ${id} and status = ${1}`);
     },
     getIncomeStatByYear: (year) => {
         return db.query(`
