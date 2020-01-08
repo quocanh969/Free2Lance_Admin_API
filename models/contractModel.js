@@ -104,4 +104,15 @@ module.exports = {
     getHistoryContracts: () => {
         return db.query('select * from contracts where status = 2');
     },
+    getTopTutorsAllTime: () => {
+        return db.query(`
+        select id_tutor, u.name, u.email, m.name as major, t.evaluation,sum(totalPrice) as total from contracts as c, tutors as t, users as u, majors as m 
+        where c.status = 2 and u.status = 1 and u.id = c.id_tutor and u.id = t.id_user and m.id = t.major
+        group by id_tutor order by total desc limit 5;
+        `);
+    },
+    getTopMajorsAllTime: () => {
+        return db.query(`select m.*, sum(c.totalPrice) as total from majors as m, contracts as c
+        where c.major = m.id group by c.major order by total desc limit 3;`)
+    }
 }

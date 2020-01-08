@@ -921,6 +921,46 @@ router.post('/getIncomeEachYear', (req, res) => {
   })
 })
 
+router.post('/getTopMajorsAllTime', (req, res) => {
+  contractModel.getTopMajorsAllTime().then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "1"
+      }
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "0"
+      }
+    })
+  })
+})
+
+router.post('/getTopTutorsAllTime', (req, res) => {
+  contractModel.getTopTutorsAllTime().then(data => {
+    res.json({
+      code: 1,
+      info: {
+        data,
+        message: "1"
+      }
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "0"
+      }
+    })
+  })
+})
+
 let isLeapYear = (year) => {
   return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
 }
