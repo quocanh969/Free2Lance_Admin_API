@@ -2,13 +2,13 @@ var db = require('../utils/db');
 
 module.exports = {
     getAll:() => {
-        return db.query('SELECT * FROM ADMINs');
+        return db.query('SELECT * FROM admins');
     },
     getByEmail:email => {
-        return db.query(`SELECT * FROM ADMINs WHERE email = '${email}'`);
+        return db.query(`SELECT * FROM admins WHERE email = '${email}'`);
     },
     getById:id => {
-        return db.query(`SELECT * FROM ADMINs WHERE id = ${id}`);
+        return db.query(`SELECT * FROM admins WHERE id = ${id}`);
     },
     register:user=>{
         return db.add(user);

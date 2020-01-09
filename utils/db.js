@@ -55,7 +55,7 @@ module.exports = {
     },
     add: user => {
         return new Promise((resolve, reject) => {
-            var sql = `INSERT INTO ADMINs(username, password, name, address, email, phone, yob, gender, avatarLink, status, role) 
+            var sql = `INSERT INTO admins(username, password, name, address, email, phone, yob, gender, avatarLink, status, role) 
                         VALUES('${user.username}', '${user.password}', '${user.name}', '${user.address}', '${user.email}', '${user.phone}',${user.yob},${user.gender},'',${false}, ${2})`;            
             var connection = createConnection();
             connection.connect();
