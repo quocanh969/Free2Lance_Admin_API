@@ -9,7 +9,7 @@ module.exports = {
         }
         return db.query(`select c.*, u1.name as learner, u1.avatarLink, u2.name as learner, m.name as major_name
         from contracts as c, tutors as t, users as u1, users as u2, majors as m
-        where c.id_learner = u1.id and c.id_tutor = t.id_user and c.id_tutor = u2.id and c.major = m.id and ${queryOption.type} = ${queryOption.id}`);
+        where c.status != 4 and c.id_learner = u1.id and c.id_tutor = t.id_user and c.id_tutor = u2.id and c.major = m.id and ${queryOption.type} = ${queryOption.id}`);
     },
     getContractDetail: (id) => {
         return db.query(`select c.*, u1.email as learner_email, u2.email as tutor_email from contracts as c, users as u1, users as u2
@@ -28,16 +28,16 @@ module.exports = {
         group by id_tutor order by total desc limit 5;
         `);
     },
-    getTutorByDate: (dateStr) => {
+    getIncomeByDate: (dateStr) => {
+        console.log(dateStr);
         return db.query(`
-        select id_tutor, u.name, u.email, m.name as major, t.evaluation,sum(totalPrice) as total from contracts as c, tutors as t, users as u, majors as m
-        where c.status = 2 and u.status = 1 and u.id = c.id_tutor and u.id = t.id_user and m.id = t.major and c.EndDate = '${dateStr}'
-        group by id_tutor order by total desc limit 3;
+        select sum(c.totalPrice) as total from contracts as c
+        where c.status = 2 and c.EndDate = '${dateStr}';
         `)
     },
     getMajorByIncomeFromLastNDays: (days) => {
         return db.query(`select m.*, sum(c.totalPrice) as total from majors as m, contracts as c
-        where c.major = m.id and c.EndDate between curdate() - interval ${days} day and curdate() group by c.major order by total desc limit 3;`)
+        where c.status = 2 and m.status = 1 and c.major = m.id and c.EndDate between curdate() - interval ${days} day and curdate() group by c.major order by total desc limit 3;`)
     },
     getActiveContractsWithComplains: () => {
         return db.query(`select * from contracts where status = ${1} and complain != ''`);
@@ -47,6 +47,9 @@ module.exports = {
     },
     removeComplain: (id) => {
         return db.query(`update contracts set complain = '' where id = ${id}`);
+    },
+    stopContract: (id) => {
+        return db.query(`update contracts set status = ${4} where id = ${id}`);
     },
     getIncomeStatByYear: (year) => {
         return db.query(`
@@ -83,14 +86,14 @@ module.exports = {
     },
     getIncomeStatByMonth: (year, month) => {
         return db.query(`
-            select year(EndDate) year, month(EndDate) month, day(EndDate) day, sum(totalPrice) as total from contracts where year(EndDate) = ${year} and month(EndDate) = ${month} group by day;
+            select year(EndDate) year, month(EndDate) month, day(EndDate) day, sum(totalPrice) as total from contracts where status = 2 and year(EndDate) = ${year} and month(EndDate) = ${month} group by day;
         `)
     },
     getIncomeEachYear: () => {
         return db.query(`select year(EndDate) as year, sum(totalPrice) as total from contracts where status = 2 group by year order by year asc;`)
     },
     getContracts: () => {
-        return db.query('select * from contracts');
+        return db.query('select * from contracts where status != 4');
     },
     getPendingContracts: () => {
         return db.query('select * from contracts where status = 0');
@@ -113,6 +116,6 @@ module.exports = {
     },
     getTopMajorsAllTime: () => {
         return db.query(`select m.*, sum(c.totalPrice) as total from majors as m, contracts as c
-        where c.major = m.id group by c.major order by total desc limit 3;`)
+        where c.status = 2 and m.status = 1 and c.major = m.id group by c.major order by total desc limit 3;`)
     }
 }

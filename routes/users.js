@@ -63,7 +63,7 @@ router.post('/getSkillList', function (req, res) {
     .then((data) => {
       let count = data.length;
       console.log(count);
-      data = data.slice(queryOption.page * 10, queryOption.page * 10 + 10);
+      data = data.slice(queryOption.page * 8, queryOption.page * 8 + 8);
 
       res.json({
         code: 1,
@@ -550,9 +550,9 @@ router.post('/getTopTutorsByIncome', (req, res) => {
   })
 })
 
-router.post('/getTopTutorsByIncomeByDate', (req, res) => {
+router.post('/getIncomeByDate', (req, res) => {
   let date = req.body.date;
-  contractModel.getTutorByDate(date).then(data => {
+  contractModel.getIncomeByDate(date).then(data => {
     res.json({
       code: 1,
       info: {
@@ -617,6 +617,90 @@ router.get('/getComplainedContracts', (req, res) => {
 router.put('/cancelAnActiveContract', (req, res) => {
   let id = req.body.id_contract;
   contractModel.cancelAnActiveContract(id).then(data => {
+    userModel.getLearerAndTutorByContract(id).then(data2 => {
+      const learnerEmail = data2[0].email;
+      const learnerName = data2[0].name;
+      const tutorEmail = data2[1].email;
+      const tutorName = data2[1].name;
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: `${EMAIL_USERNAME}`,
+          pass: `${EMAIL_PASSWORD}`,
+        },
+      });
+      let mailOptionsLearner = {
+        from: EMAIL_USERNAME,
+        to: `${learnerEmail}`,
+        subject: 'Your contract has been terminated',
+        text:
+          `Your contract with tutor ${tutorName} has been terminated due to your complain about the tutor.\n
+           We hope you soon find a more suitable tutor and we are sorry for your bad experience.\n\n`
+      };
+      let mailOptionsTutor = {
+        from: EMAIL_USERNAME,
+        to: `${tutorEmail}`,
+        subject: 'Your contract has been terminated',
+        text:
+          `Your contract with learner ${learnerName} has been terminated due to his or her complain about your service.\n
+           If you have any questions, please contact us to discuss more about this problem.
+           We hope you soon find a more suitable learner and we are sorry for your bad experience.\n\n`
+      };
+      transporter.sendMail(mailOptionsLearner, (err, response) => {
+        if (err) {
+          res.json({
+            code: 0,
+            info: {
+              err,
+              response,
+              message: "Sending to learner failed, terminate!",
+            }
+          })
+        }
+        transporter.sendMail(mailOptionsTutor, (err, response) => {
+          if (err) {
+            res.json({
+              code: 0,
+              info: {
+                err,
+                response,
+                message: "Sending to tutor failed",
+              }
+            })
+          }
+          res.json({
+            code: 1,
+            info: {
+              data,
+              message: "Cancellation and mail sent to both",
+            }
+          })
+        })
+      })
+    }).catch(err => {
+      res.json({
+        code: 0,
+        info: {
+          err,
+          message: "Mail sent failed"
+        },
+      })
+    })
+  }).catch(err => {
+    res.json({
+      code: 0,
+      info: {
+        err,
+        message: "Cancellation failed",
+      }
+    })
+  })
+})
+
+
+router.put('/stopContract', (req, res) => {
+  let id = req.body.id_contract;
+  contractModel.stopContract(id).then(data => {
     userModel.getLearerAndTutorByContract(id).then(data2 => {
       const learnerEmail = data2[0].email;
       const learnerName = data2[0].name;

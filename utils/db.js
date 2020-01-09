@@ -4,22 +4,22 @@ var createConnection = () => {
     return mysql.createConnection({
         
         
-        host: 'localhost',
-        port: '3306',
-        user: 'root',
-        password: '',
-        database: 'uber_tutor_admin',
-        dateStrings: true,
-        timezone: 'Z',
-        
-        
-        // host: 'remotemysql.com',
+        // host: 'localhost',
         // port: '3306',
-        // user: 'LdOe2JLqt9',
-        // password: 'cAMxQWpQ7U',
-        // database: 'LdOe2JLqt9',
-        // dateStrings: true,        
+        // user: 'root',
+        // password: '',
+        // database: 'uber_tutor_admin',
+        // dateStrings: true,
         // timezone: 'Z',
+        
+        
+        host: 'remotemysql.com',
+        port: '3306',
+        user: 'LdOe2JLqt9',
+        password: 'cAMxQWpQ7U',
+        database: 'LdOe2JLqt9',
+        dateStrings: true,        
+        timezone: 'Z',
         
         typeCast: function castField(field, useDefaultTypeCasting) {
 
