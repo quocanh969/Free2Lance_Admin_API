@@ -115,6 +115,7 @@ router.post('/getDetailUser', function (req, res) {
             price: value[0].price,
             evaluation: value[0].evaluation,
             avatarLink: value[0].avatarLink,
+            introduction: value[0].introduction,
             id_major: value[0].major,
             major_name: value[0].major_name,
             skills,
